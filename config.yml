@@ -30,3 +30,4 @@ settings:
     authentication: true
     logging: false
     caching: true
+
