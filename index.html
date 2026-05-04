@@ -1,1 +1,227 @@
-index.html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML 文件读取演示</title>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin: 20px 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        pre {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+        .kv-row {
+            display: flex;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin: 4px 0;
+            transition: background 0.2s;
+        }
+        .kv-row:hover { background: #f8f9ff; }
+        .kv-key {
+            font-weight: 700;
+            color: #667eea;
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+        .kv-value { color: #444; }
+        .array-box {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 6px 0;
+            border-left: 4px solid #667eea;
+        }
+        .nested-box {
+            margin-left: 24px;
+            padding-left: 16px;
+            border-left: 2px dashed #c7c7e0;
+            margin-top: 8px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .badge-string { background: #d4edda; color: #155724; }
+        .badge-number { background: #cce5ff; color: #004085; }
+        .badge-bool { background: #fff3cd; color: #856404; }
+        .badge-array { background: #e2e3f3; color: #383863; }
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 16px;
+            padding: 30px;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 16px;
+            border-radius: 10px;
+            border-left: 4px solid #dc3545;
+        }
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #d4edda;
+            color: #155724;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📄 YAML 文件读取演示（fetch + js-yaml）</h1>
+
+    <div class="card">
+        <div class="section-title">📥 原始 YAML 文件内容</div>
+        <div class="success-badge" id="fetch-status">⏳ 正在通过 fetch 加载 config.yml...</div>
+        <pre id="yaml-raw">等待加载...</pre>
+    </div>
+
+    <div class="card">
+        <div class="section-title">🔍 解析后的结构化数据</div>
+        <div id="parsed-data">
+            <div class="loading">正在解析 YAML 数据...</div>
+        </div>
+    </div>
+
+    <script>
+        // 使用 fetch 加载外部 YAML 文件
+        fetch('config.yml')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ': 无法加载 config.yml，请确保文件在同一目录下');
+                }
+                return response.text();
+            })
+            .then(yamlText => {
+                // 显示原始 YAML 内容
+                document.getElementById('yaml-raw').textContent = yamlText;
+                document.getElementById('fetch-status').innerHTML = '✅ 成功加载 config.yml';
+                document.getElementById('fetch-status').style.background = '#d4edda';
+                document.getElementById('fetch-status').style.color = '#155724';
+
+                // 使用 js-yaml 解析
+                const data = jsyaml.load(yamlText);
+                const container = document.getElementById('parsed-data');
+                container.innerHTML = '';
+
+                function getTypeBadge(value) {
+                    if (Array.isArray(value)) return '<span class="badge badge-array">array[' + value.length + ']</span>';
+                    if (typeof value === 'boolean') return '<span class="badge badge-bool">boolean</span>';
+                    if (typeof value === 'number') return '<span class="badge badge-number">number</span>';
+                    if (typeof value === 'string') return '<span class="badge badge-string">string</span>';
+                    return '';
+                }
+
+                function renderValue(value, parent) {
+                    if (Array.isArray(value)) {
+                        value.forEach((item, idx) => {
+                            const box = document.createElement('div');
+                            box.className = 'array-box';
+                            if (typeof item === 'object' && item !== null) {
+                                const nested = document.createElement('div');
+                                nested.className = 'nested-box';
+                                renderObject(item, nested);
+                                box.appendChild(nested);
+                            } else {
+                                box.innerHTML = '<span style="color:#667eea;font-weight:600;">[' + idx + ']</span> ' + 
+                                    '<span style="color:#444;">' + item + '</span>';
+                            }
+                            parent.appendChild(box);
+                        });
+                    } else if (typeof value === 'object' && value !== null) {
+                        const nested = document.createElement('div');
+                        nested.className = 'nested-box';
+                        renderObject(value, nested);
+                        parent.appendChild(nested);
+                    } else {
+                        const span = document.createElement('span');
+                        span.className = 'kv-value';
+                        span.innerHTML = value + ' ' + getTypeBadge(value);
+                        parent.appendChild(span);
+                    }
+                }
+
+                function renderObject(obj, parent) {
+                    Object.entries(obj).forEach(([key, value]) => {
+                        const row = document.createElement('div');
+                        row.className = 'kv-row';
+
+                        const keyDiv = document.createElement('div');
+                        keyDiv.className = 'kv-key';
+                        keyDiv.textContent = key;
+                        row.appendChild(keyDiv);
+
+                        const valueDiv = document.createElement('div');
+                        valueDiv.style.flex = '1';
+                        renderValue(value, valueDiv);
+                        row.appendChild(valueDiv);
+
+                        parent.appendChild(row);
+                    });
+                }
+
+                renderObject(data, container);
+            })
+            .catch(error => {
+                document.getElementById('yaml-raw').textContent = '加载失败';
+                document.getElementById('fetch-status').innerHTML = '❌ 加载失败';
+                document.getElementById('fetch-status').style.background = '#f8d7da';
+                document.getElementById('fetch-status').style.color = '#721c24';
+                document.getElementById('parsed-data').innerHTML = 
+                    '<div class="error"><strong>错误：</strong>' + error.message + '<br><br>' +
+                    '提示：请确保 config.yml 文件与 index.html 放在同一目录下，并通过 HTTP 服务器访问（如使用 VS Code Live Server）。<br>' +
+                    '直接双击打开 HTML 文件可能因浏览器的 CORS 安全策略导致 fetch 失败。</div>';
+            });
+    </script>
+</body>
+</html>
+
