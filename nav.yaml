@@ -32,13 +32,21 @@ categories:
   - name: 在线文档 
     items:
       - url: https://www.kdocs.cn/l/ch5hLH44CslS
+        add: autodl-ubuntu文档
       - url: https://www.kdocs.cn/l/cutNQYHeCoKe
+        add: 重定向符号解析
       - url: https://www.kdocs.cn/l/cmu8y2cUT9gd
+        add: linux-shell脚本使用教程
       - url: https://www.kdocs.cn/l/cmT774dlMR7e
+        add: execl不过如此
       - url: https://www.kdocs.cn/l/ch1cNFETXbNh
+        add: 库存表
       - url: https://www.kdocs.cn/etapps/query/q/UQv5tp5m
+        add: 库存查询
       - url: https://www.kdocs.cn/l/cltItRgvcnQQ
+        add: 图片资源
       - url: https://www.kdocs.cn/l/crt2Zg4bI1dA
+        add: execl快捷键
 
   - name: 在线下载
     items:
