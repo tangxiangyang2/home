@@ -19,7 +19,11 @@
 </head>
 
 <body class="bg-gray-100">
-    <!-- 封面背景 -->
+    
+
+    <div id="app" class="max-w-6xl mx-auto p-4">
+         
+       <!-- 封面背景 -->
         <div class="hero-bg relative h-48 md:h-64 lg:h-80 flex items-center justify-center">
             <div class="absolute inset-0 bg-black/40"></div>
             <div class="relative z-10 text-center text-white px-4">
@@ -27,8 +31,6 @@
                 <p class="text-sm md:text-base opacity-80">{{ subtitle }}</p>
             </div>
         </div>
-
-    <div id="app" class="max-w-6xl mx-auto p-4">
         <h1 class="text-lg font-bold mb-6 text-center">{{ title }}</h1>
 
         <div v-for="cat in categories" :key="cat.name" class="mb-6">
