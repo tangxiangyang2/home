@@ -5,34 +5,36 @@ categories:
     items:
       - url: https://www.bilibili.com/
       - url: https://www.gm.cn/?ref=gmssh
-      - url: https://www.kimi.com/chat 
-      - url: https://www.autodl.com/ 
+      - url: https://www.kimi.com/chat
+      - url: https://www.autodl.com/
       - url: https://smallpdf.com/cn/pdf-to-jpg
       - url: https://www.onlineocr.net/zh_hans/pdftoimage
       - url: https://www.91panta.cn/
       - url: https://wallhaven.cc/
-        add: 壁纸-vpn 
+        add: 壁纸-vpn
       - url: https://www.lanzou.com/
         add: 蓝奏云-13268427750管理
+  - name: 网盘资源
+    items:
       - url: https://www.91panta.cn/index
       - url: http://104.243.25.80/
-        add: Seedhub电影下载 
+        add: Seedhub电影下载
       - url: https://www.sfeii.com/
-        add: 网盘资源导航-vpn 
+        add: 网盘资源导航-vpn
       - url: https://www.dytt8899.com/index.html
       - url: http://www.xunleipu.cc/
-        add: 电影资源1 
+        add: 电影资源1
       - url: https://y80s.net/
         add: 迅雷最全电影资源
       - url: https://yun.139.com/m/#/
         add: 中国移动云盘
       - url: https://www.hmxz.org/
-        add: 海绵小站-1769231861@qq.com 
+        add: 海绵小站-1769231861@qq.com
       - url: https://github.com/
       - url: https://m.hkbdy.com/
         add: 好恐怖迅雷种子
 
-  - name: 在线文档 
+  - name: 在线文档
     items:
       - url: https://www.kdocs.cn/l/ch5hLH44CslS
         add: autodl-ubuntu文档
@@ -52,6 +54,8 @@ categories:
         add: execl快捷键
       - url: https://www.kdocs.cn/l/ckvnFiRUKi5K
         add: tail wind css中文学习文档
+  - name: 私密
+    items:
       - url: https://www.kdocs.cn/l/cqupFRiGqAbD
         add: Sheet1
       - url: https://www.kdocs.cn/l/cmSN4Dsn1phi
@@ -60,4 +64,9 @@ categories:
   - name: 在线下载
     items:
       - url: https://wwbmb.lanzoum.com/iqfDg3olvi6j
-        add: 截图工具
+        add: 截图工具
+
+  - name: 网站开发
+    items:
+      - url: https://www.iconfont.cn/
+        add: 阿里图标库

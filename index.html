@@ -11,7 +11,7 @@
     <base target="_blank">
     <style>
         .hero-bg {
-            background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80');
+            background-image: url('bg.png');
             background-size: cover;
             background-position: center;
         }
@@ -21,25 +21,53 @@
 <body class="bg-gray-100">
     
 
-    <div id="app" class="max-w-6xl mx-auto p-4">
-         
-       <!-- 封面背景 -->
-        <div class="hero-bg relative h-48 md:h-64 lg:h-80 flex items-center justify-center">
-            <div class="absolute inset-0 bg-black/40"></div>
-            <div class="relative z-10 text-center text-white px-4">
-                <h1 class="text-xl md:text-xl lg:text-xl font-bold mb-2">{{ title }}</h1>
-                <p class="text-sm md:text-base opacity-80">{{ subtitle }}</p>
-            </div>
-        </div>
+    <!-- 整个应用的根容器 -->
+    <!-- max-w-6xl: 最大宽度约1152px，防止太宽；mx-auto: 左右自动边距，实现居中 -->
+    <div id="app" class="max-w-6xl mx-auto">
+    
+        <!-- 顶部封面背景 -->
+        <!-- relative: 相对定位，方便子元素绝对定位；h-48: 高度12rem(192px)；md:h-64: 中等屏幕高度16rem；lg:h-80: 大屏幕高度20rem -->
+        <!-- flex: 弹性布局；items-center: 垂直居中；justify-center: 水平居中 -->
+        <div class="hero-bg relative h-48 md:h-64 lg:h-80 flex items-center justify-center"></div>
+    
+        <!-- 页面大标题 -->
+        <!-- text-lg: 大字体(1.125rem)；font-bold: 粗体；mb-6: 下边距1.5rem；text-center: 文字居中 -->
         <h1 class="text-lg font-bold mb-6 text-center">{{ title }}</h1>
-
-        <div v-for="cat in categories" :key="cat.name" class="mb-6">
+    
+        <!-- 遍历每个分类 -->
+        <!-- mb-6: 下边距1.5rem，分类之间留空；p-4: 内边距1rem -->
+        <div v-for="cat in categories" :key="cat.name" class="mb-6 p-4">
+    
+            <!-- 分类标题 -->
+            <!-- text-lg: 大字体；font-semibold: 半粗体；text-gray-700: 深灰色文字；mb-3: 下边距0.75rem -->
+            <!-- pl-2: 左内边距0.5rem；border-l-4: 左边框4px宽；border-blue-500: 蓝色边框 -->
             <h2 class="text-lg font-semibold text-gray-700 mb-3 pl-2 border-l-4 border-blue-500">{{ cat.name }}</h2>
+    
+            <!-- 链接卡片容器 -->
+            <!-- grid: 网格布局；grid-cols-1: 手机1列；md:grid-cols-2: 中等屏幕2列；gap-3: 卡片间距0.75rem -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    
                 <a v-for="item in cat.items" :key="item.name" :href="item.url" target="_blank"
-                    class="bg-white p-3 rounded shadow hover:shadow-md hover:text-blue-600 transition block">
-                    <!-- 文章的标题 -->
-                    <div class="truncate text-blue-600">{{item.add || item.fetchedTitle}}</div>
+                    class="bg-white p-3 rounded shadow hover:shadow-md transition block flex items-center">
+                
+                    <!-- 左边：图片区域，占10% -->
+                    <!-- w-[10%]: 宽度10%；shrink-0: 不压缩，保持固定比例 -->
+                    <div class="w-[5%] shrink-0">
+                        <img :src="item.ico || 'icon.png'" class="w-6 h-6 object-contain" alt="图标">
+                    </div>
+                
+                    <!-- 中间：标题区域，占80% -->
+                    <!-- w-[80%]: 宽度80%；px-2: 左右内边距0.5rem，和图片、标签隔开 -->
+                    <!-- truncate: 文字太长显示省略号...；text-blue-600: 蓝色文字 -->
+                    <div class="w-[85%] px-2 truncate text-blue-600 hover:text-red-600">
+                        {{item.add || item.url}}
+                    </div>
+                
+                    <!-- 右边：标签区域，占10% -->
+                    <!-- w-[10%]: 宽度10%；shrink-0: 不压缩；text-right: 文字靠右对齐 -->
+                    <div v-if="item.add" class="w-[10%] shrink-0 text-center text-sm border rounded bg-red-400 text-white">
+                         HOT
+                    </div>
                 </a>
             </div>
         </div>
@@ -62,6 +90,19 @@
                         return data.data?.title || url;
                     } catch (e) {
                         return url;
+                    }
+                };
+
+                // 获取网站图标（favicon）的地址
+                // 用国内一为忆的 favicon 服务，上海云盾+Cloudflare CDN 加速
+                const getFavicon = (url) => {
+                    try {
+                        // 从网址中提取域名，比如 https://www.baidu.com/abc → www.baidu.com
+                        const domain = new URL(url).hostname;
+                        // 返回接口地址，格式：域名.png
+                        return `https://api.xinac.net/icon/?url=${domain}`;
+                    } catch (e) {
+                        return '';
                     }
                 };
                 
@@ -98,7 +139,9 @@
                     // 异步获取每个网站的标题
                     for (const cat of categories.value) {
                         for (const item of cat.items) {
-                            item.fetchedTitle = await fetchTitle(item.url);
+                            item.url = await fetchTitle(item.url);
+                            item.ico = await getFavicon(item.url);
+                            console.log(item.ico)
                         }
                     }
                 });
