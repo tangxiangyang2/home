@@ -139,7 +139,7 @@
                     // 异步获取每个网站的标题
                     for (const cat of categories.value) {
                         for (const item of cat.items) {
-                            item.url = await fetchTitle(item.url);
+                            item.add = await fetchTitle(item.url);
                             item.ico = await getFavicon(item.url);
                             console.log(item.ico)
                         }
